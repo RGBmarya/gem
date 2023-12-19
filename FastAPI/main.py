@@ -19,14 +19,9 @@ class Message(BaseModel):
 def read_root():
     return {"Hello": "World"}
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-@app.post("/system/query")
-async def query(user_message: Message):
-    system_text = utils.query(user_input=user_message.text)
+@app.post("/system/query/{location}")
+async def query(location: str, user_message: Message):
+    system_text = utils.query(location=location, user_input=user_message.text)
     system_message = Message(
         author={"id": "system"},
         createdAt=int(datetime.timestamp(datetime.now()) * 1000),

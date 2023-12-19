@@ -3,7 +3,11 @@ import { StyleSheet } from 'react-native';
 import { Chat, MessageType } from '@flyerhq/react-native-chat-ui'
 import { v4 as uuidv4 } from 'uuid';
 
-const Thread = () => {
+export type Props = {
+  location: string;
+};
+
+const Thread: React.FC<Props> = ({ location = "Mumbai" }) => {
   const [messages, setMessages] = useState<MessageType.Any[]>([])
   const [currentUserMessage, setCurrentUserMessage] = useState<string>("")
   const pageRendered = useRef(false)
@@ -30,7 +34,7 @@ const Thread = () => {
   }
 
   const handleResponse = async () => {
-    const url = "http://localhost:8080/system/query"
+    const url = `http://localhost:8080/system/query/${location}`
     const body: MessageType.Text = {
       author: system,
       createdAt: Date.now(),

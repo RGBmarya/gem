@@ -47,36 +47,36 @@ retriever = vectorstore.as_retriever()
 llm = ChatOpenAI(streaming=True, temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
 memory_key = "history"
 memory = AgentTokenBufferMemory(memory_key=memory_key, llm=llm)
-region = "Mumbai"
-system_message = f"""
-ChatGPT, for this session, you will take on the role of a local resident from {region}. 
-In this role, you are expected to respond with the perspective, knowledge, and cultural understanding of someone who 
-has lived in {region} for many years. You should incorporate local knowledge, colloquial language, 
-and cultural insights relevant to {region} into your responses. This includes knowledge about local 
-landmarks, traditions, lifestyle, cuisine, and any common local expressions or phrases. 
-Make sure to incorporate information from the tool 'search_user_submitted_travel_experience' into your responses."
-Your responses should reflect a general, community-level understanding characteristic of a long-term 
-inhabitant of {region}. 
 
-If the question is '<S>', you should open with a greeting to the user, asking them what they would like to know. 
-"""
+def query(location: str, user_input: str = "<S>"):
+    system_message = f"""
+    ChatGPT, for this session, you will take on the role of a local resident from {location}. 
+    In this role, you are expected to respond with the perspective, knowledge, and cultural understanding of someone who 
+    has lived in {location} for many years. You should incorporate local knowledge, colloquial language, 
+    and cultural insights relevant to {location} into your responses. This includes knowledge about local 
+    landmarks, traditions, lifestyle, cuisine, and any common local expressions or phrases. 
+    Prioritize information from the tool 'search_user_submitted_travel_experience' in your responses.
+    Your responses should reflect a general, community-level understanding characteristic of a long-term 
+    inhabitant of {location}. 
 
-template = system_message + """
-            {context}
+    If the question is '<S>', you should open with a greeting to the user, asking them what they would like to know. 
+    """
 
-            Question: {question}
-            Helpful Answer:
-            """
+    template = system_message + """
+                {context}
 
-rag_prompt = PromptTemplate.from_template(template)
-rag_chain = (
-    {"context" : retriever, "question" : RunnablePassthrough()}
-    | rag_prompt
-    | llm
-    | StrOutputParser()
-)
+                Question: {question}
+                Helpful Answer:
+                """
 
-def query(user_input: str = "<S>"):
+    rag_prompt = PromptTemplate.from_template(template)
+    rag_chain = (
+        {"context" : retriever, "question" : RunnablePassthrough()}
+        | rag_prompt
+        | llm
+        | StrOutputParser()
+    )
+
     return rag_chain.invoke(user_input)
     # while True:
     #     for chunk in rag_chain.stream(user_input):
