@@ -1,35 +1,71 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# Expo & React Native
+######################
 node_modules/
-
-# Expo
-.expo/
-dist/
-web-build/
-
-# Native
-*.orig.*
+npm-debug.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+*.orig.*
+web-build/
+ios/build/
+android/build/
+android/app/src/main/assets/shell-app.bundle
+android/app/src/main/assets/shell-app-manifest.json
 
 # macOS
+########
 .DS_Store
-*.pem
+.AppleDouble
+.LSOverride
 
-# local env files
-.env*.local
+# Windows
+##########
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# typescript
-*.tsbuildinfo
+# Various IDEs
+##############
+.idea/
+*.swp
+*.swo
+*.swn
+*.log
+*.tmp
+*.temp
+.vscode/
+
+# Python Environment
+#####################
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Others
+########
+.yarn/
+.yarn-cache/
+coverage/
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
