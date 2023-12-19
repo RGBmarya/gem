@@ -13,16 +13,17 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain.schema import StrOutputParser
 from chromadb.utils import embedding_functions
 from dotenv import load_dotenv
-
+import typing
 
 load_dotenv()
 
+# Spin up server 
 chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 chroma_collection = chroma_client.get_or_create_collection("gem")
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 
-def ingest(client, collection, collection_name, embedding_function):
+def ingest(collection):
     loader = TextLoader("./data.txt")
     docs = loader.load()
 
@@ -33,28 +34,19 @@ def ingest(client, collection, collection_name, embedding_function):
     metadatas = [doc.metadata for doc in splits]
     collection.add(ids=ids, documents=documents, metadatas=metadatas)
 
-    return Chroma(
-        client=client,
-        collection_name=collection_name,
+# Ingest data
+ingest(collection=chroma_collection)
+
+vectorstore = Chroma(
+        client=chroma_client,
+        collection_name="gem",
         embedding_function=embedding_function
     )
 
-# vectorstore = Chroma.from_documents(documents=splits, embedding=OpenAIEmbeddings())
-vectorstore = ingest(
-    client=chroma_client,
-    collection=chroma_collection,
-    collection_name="gem",
-    embedding_function=embedding_function
-)
-
 retriever = vectorstore.as_retriever()
-
 llm = ChatOpenAI(streaming=True, temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
-
 memory_key = "history"
-
 memory = AgentTokenBufferMemory(memory_key=memory_key, llm=llm)
-
 region = "Mumbai"
 system_message = f"""
 ChatGPT, for this session, you will take on the role of a local resident from {region}. 
@@ -70,11 +62,11 @@ If the question is '<S>', you should open with a greeting to the user, asking th
 """
 
 template = system_message + """
-{context}
+            {context}
 
-Question: {question}
-Helpful Answer:
-"""
+            Question: {question}
+            Helpful Answer:
+            """
 
 rag_prompt = PromptTemplate.from_template(template)
 rag_chain = (
@@ -84,9 +76,15 @@ rag_chain = (
     | StrOutputParser()
 )
 
-user_input = "<S>"
-while True:
-    for chunk in rag_chain.stream(user_input):
-        print(chunk, end="", flush=True)
-    print()
-    user_input=input()
+def query(user_input: str = "<S>"):
+    return rag_chain.invoke(user_input)
+    # while True:
+    #     for chunk in rag_chain.stream(user_input):
+    #         print(chunk, end="", flush=True)
+    #     print()
+    #     user_input=input()
+
+    # for chunk in rag_chain.stream(user_input):
+    #     yield chunk
+
+# query()
