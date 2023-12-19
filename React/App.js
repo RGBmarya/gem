@@ -3,8 +3,6 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import 'react-native-get-random-values';
-import Hello from './components/Hello';
-import Message from './components/Message';
 import Thread from './screens/Thread';
 
 
@@ -27,7 +25,6 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={Thread} />
-        <Stack.Screen name="Hello" component={Hello} />
       </Stack.Navigator>
     </NavigationContainer>
   );
