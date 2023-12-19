@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const Thread = () => {
   const [messages, setMessages] = useState<MessageType.Any[]>([])
+  const [currentUserMessage, setCurrentUserMessage] = useState<string>("")
   const pageRendered = useRef(false)
   const userSent = useRef(false)
   
@@ -16,6 +17,7 @@ const Thread = () => {
   }
 
   const handleSendPress = (message: MessageType.PartialText) => {
+    setCurrentUserMessage(message.text)
     const textMessage: MessageType.Text = {
       author: user,
       createdAt: Date.now(),
@@ -27,15 +29,39 @@ const Thread = () => {
     userSent.current = true;
   }
 
-  const handleResponse = () => {
-    const textMessage: MessageType.Text = {
+  const handleResponse = async () => {
+    const url = "http://localhost:8080/system/query"
+    const body: MessageType.Text = {
       author: system,
       createdAt: Date.now(),
       id: uuidv4(),
-      text: "[System response]",
+      text: currentUserMessage,
       type: "text",
     }
-    addMessage(textMessage)
+
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+      body: JSON.stringify(body)
+    })
+    .then(response => response.json())
+    .then (data => {
+      console.log(data)
+      const systemMessage: MessageType.Text = {
+        author: data.author,
+        createdAt: data.createdAt,
+        id: data.id,
+        text: data.text,
+        type: data.type,
+      }
+      addMessage(systemMessage)
+    })
+
+
+    // addMessage(textMessage)
   }
 
   useEffect(() => {
