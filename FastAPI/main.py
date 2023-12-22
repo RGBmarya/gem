@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
 import utils
+from fastapi.responses import StreamingResponse
 
 app = FastAPI()
 
@@ -14,10 +15,18 @@ class Message(BaseModel):
     id: str
     text: str
     type: str
-    
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+
+# Currently unused - for future use
+@app.get("/system/question/{location}")
+def get_question(location: str, question: str):
+    return utils.generate_question(location=location, question=question)
+
+
+@app.post("/system/ingest/{location}")
+async def ingest_message(location: str, question: str, user_message: Message):
+    response = utils.ingest_message(location=location, question=question, message=user_message.text)
+    return response
+
 
 @app.post("/system/query/{location}")
 async def query(location: str, user_message: Message):
