@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet } from 'react-native';
 import { Chat, MessageType } from '@flyerhq/react-native-chat-ui'
 import { v4 as uuidv4 } from 'uuid';
+import type { DrawerScreenProps } from '@react-navigation/drawer';
+import { RootDrawerParamList } from '../App';
 
-export type Props = {
-  location: string;
-};
 
-const Thread: React.FC<Props> = ({ location = "Mumbai" }) => {
+type Props = DrawerScreenProps<RootDrawerParamList, 'Thread'>;
+
+const Thread: React.FC<Props> = ( { route, navigation }: Props) => {
+  const { location } = route.params
   const [messages, setMessages] = useState<MessageType.Any[]>([])
   const [currentUserMessage, setCurrentUserMessage] = useState<string>("")
   const pageRendered = useRef(false)
@@ -63,12 +64,10 @@ const Thread: React.FC<Props> = ({ location = "Mumbai" }) => {
       }
       addMessage(systemMessage)
     })
-
-
-    // addMessage(textMessage)
   }
 
   useEffect(() => {
+    console.log(location)
     if (userSent.current && pageRendered.current) {
       handleResponse()
       userSent.current = false
@@ -86,12 +85,5 @@ const Thread: React.FC<Props> = ({ location = "Mumbai" }) => {
       />
   )
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-  },
-});
 
 export default Thread;
