@@ -17,11 +17,23 @@ export default function App() {
   return (
     <NavigationContainer>
       <Drawer.Navigator>
-        <Drawer.Screen name="Ingest" component={Ingest} initialParams={{ location: "Mumbai"}} />
-        <Drawer.Screen name="Thread" 
-                      component={Thread} 
-                      initialParams={{ location: "Mumbai"}} 
-                      options={({ route }) => ({title: route.params?.location || "Location" })}/>
+        <Drawer.Screen
+          name="Ingest"
+          component={Ingest}
+          initialParams={{ location: "Mumbai" }}
+          options={{
+            title: "Ingest",
+            drawerLabelStyle: { color: "blue", fontWeight: "bold"},
+          }}
+        />
+        <Drawer.Screen
+          name="Thread"
+          component={Thread}
+          initialParams={{ location: "Mumbai" }}
+          options={({ route }) => ({
+            title: route.params?.location || "Location",
+          })}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );
