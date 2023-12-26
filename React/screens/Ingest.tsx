@@ -3,11 +3,12 @@ import { Chat, MessageType } from '@flyerhq/react-native-chat-ui'
 import { v4 as uuidv4 } from 'uuid';
 import type { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootDrawerParamList } from '../App';
+import { useIsFocused } from '@react-navigation/native';
 
 type Props = DrawerScreenProps<RootDrawerParamList, 'Ingest'>;
 
 const Ingest: React.FC<Props> = ({ route, navigation }: Props) => {
-  const { location } = route.params;
+  const [location, setLocation] = useState<string>(route.params.location);
   const [messages, setMessages] = useState<MessageType.Any[]>([]);
   const questionAsked = useRef(false);
 
@@ -68,10 +69,16 @@ const Ingest: React.FC<Props> = ({ route, navigation }: Props) => {
     addMessage(userMessage);
     ingest(userMessage, questions[questionsIndex.current - 1]); // subtract 1 becuase questionsIndex was already incremented in askQuestion()
     questionAsked.current = false;
+
+    console.log(questionsIndex.current);
+    if (questionsIndex.current === questions.length) {
+      console.log("here");
+      navigation.navigate('LocationIngest', { process: 'ingest' });
+    };
   };
 
   const ingest = async (message: MessageType.Text, question: string) => {
-    console.log(message.text);
+    console.log("User message:" + message.text);
     const url: string = `http://localhost:8080/system/ingest/${location}?question=${question}`;
     const body: MessageType.Text = message;
     await fetch(url, {
@@ -84,7 +91,7 @@ const Ingest: React.FC<Props> = ({ route, navigation }: Props) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        console.log("Entry count:" + data);
       });
   };
 
