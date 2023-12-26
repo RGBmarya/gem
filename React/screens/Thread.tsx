@@ -7,8 +7,8 @@ import { RootDrawerParamList } from '../App';
 
 type Props = DrawerScreenProps<RootDrawerParamList, 'Thread'>;
 
-const Thread: React.FC<Props> = ( { route, navigation }: Props) => {
-  const { location } = route.params
+const Thread: React.FC<Props> = ( { route, navigation }) => {
+  const { location } = route.params;
   const [messages, setMessages] = useState<MessageType.Any[]>([])
   const [currentUserMessage, setCurrentUserMessage] = useState<string>("")
   const pageRendered = useRef(false)
@@ -67,7 +67,6 @@ const Thread: React.FC<Props> = ( { route, navigation }: Props) => {
   }
 
   useEffect(() => {
-    console.log(location)
     if (userSent.current && pageRendered.current) {
       handleResponse()
       userSent.current = false
