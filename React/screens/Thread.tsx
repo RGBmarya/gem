@@ -8,10 +8,11 @@ import { RootDrawerParamList } from '../App';
 type Props = DrawerScreenProps<RootDrawerParamList, 'Thread'>;
 
 const Thread: React.FC<Props> = ( { route, navigation }) => {
-  const { location } = route.params;
+  const { location } = route.params
   const [messages, setMessages] = useState<MessageType.Any[]>([])
   const [currentUserMessage, setCurrentUserMessage] = useState<string>("")
   const pageRendered = useRef(false)
+  const greetingSent = useRef(false)
   const userSent = useRef(false)
   
   const user = { id: '06c33e8b-e835-4736-80f4-63f44b66666c' }
@@ -35,7 +36,7 @@ const Thread: React.FC<Props> = ( { route, navigation }) => {
   }
 
   const handleResponse = async () => {
-    const url = `http://localhost:8080/system/query/${location}`
+    const url: string = `http://10.0.0.56:8080/system/query/${location}`
     const body: MessageType.Text = {
       author: system,
       createdAt: Date.now(),
@@ -71,7 +72,15 @@ const Thread: React.FC<Props> = ( { route, navigation }) => {
       handleResponse()
       userSent.current = false
     }
-    else {
+    if(!pageRendered.current) {
+      const greeting: MessageType.Text = {
+        author: system,
+        createdAt: Date.now(),
+        id: uuidv4(),
+        text: `Hello! Welcome to ${location}. How can I help you?`,
+        type: "text",
+      }
+      addMessage(greeting);
       pageRendered.current = true;
     }
   }, [messages])
