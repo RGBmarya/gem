@@ -20,7 +20,7 @@ load_dotenv()
 
 # Spin up server 
 chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-chroma_client.delete_collection("gem")
+# chroma_client.delete_collection("gem")
 chroma_collection = chroma_client.get_or_create_collection("gem")
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
