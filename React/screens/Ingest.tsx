@@ -73,13 +73,13 @@ const Ingest: React.FC<Props> = ({ route, navigation }: Props) => {
     console.log(questionsIndex.current);
     if (questionsIndex.current === questions.length) {
       console.log("here");
-      navigation.navigate('LocationIngest', { process: 'ingest' });
+      navigation.navigate('LocationIngest');
     };
   };
 
   const ingest = async (message: MessageType.Text, question: string) => {
     console.log("User message:" + message.text);
-    const url: string = `http://localhost:8080/system/ingest/${location}?question=${question}`;
+    const url: string = `http://10.0.0.56:8080/system/ingest/${location}?question=${question}`;
     const body: MessageType.Text = message;
     await fetch(url, {
       method: "POST",
