@@ -7,10 +7,12 @@ import 'react-native-get-random-values';
 import LocationInput from './components/LocationInput';
 import Thread from './screens/Thread';
 import Ingest from './screens/Ingest';
+import Feedback from './screens/Feedback';
 
 export type RootDrawerParamList = {
   Thread: { location: string };
   Ingest: { location: string };
+  Feedback: undefined;
   LocationInput: { process: 'ingest' | 'query' };
 };
 
@@ -28,7 +30,7 @@ function IngestStack() {
       />
       <Stack.Screen
         name="IngestThread"
-        component={Ingest}
+        component={Ingest} 
         options={
           ({route}: { route: { params?: { location?: string } } }) => ({
             title: route.params?.location,
@@ -81,6 +83,10 @@ export default function App() {
             title: "Query",
           }}
         />
+      <Drawer.Screen
+        name="Feedback"
+        component={Feedback}
+      />
       </Drawer.Navigator>
     </NavigationContainer>
   );
