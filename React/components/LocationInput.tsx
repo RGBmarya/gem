@@ -12,6 +12,10 @@ const LocationInput: React.FC<Props> = ({ route, navigation }) => {
     const process = useRef(route.params.process);
 
     const onSubmit = () => {
+        if (text === '') {
+            Alert.alert('Please enter a location');
+            return;
+        }
         if (process.current === 'query') {
             navigation.navigate("QueryThread", { location: text });
         }
@@ -26,6 +30,13 @@ const LocationInput: React.FC<Props> = ({ route, navigation }) => {
         }
     }, [route, navigation, isFocused]);
     return (
+        <>
+            
+        <Text style={{ fontSize: 20, textAlign: 'center', marginTop: 60 }}>
+            {process.current === 'ingest' ?
+             "Are you a local expert? Help us build a knowledge base for your area!" : 
+             "Ask a local expert about your area!"}
+        </Text> 
         <View style={styles.centeredView}>
                 <TouchableWithoutFeedback>
                     <View style={styles.centeredView}>
@@ -51,6 +62,7 @@ const LocationInput: React.FC<Props> = ({ route, navigation }) => {
                     </View>
                 </TouchableWithoutFeedback>
         </View>
+        </>
     );
 };
 
